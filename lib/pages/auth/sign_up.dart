@@ -11,7 +11,7 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-  late String email, password;
+  late String email, password, fullName, userName;
   final formkey = GlobalKey<FormState>();
   final firebaseAuth = FirebaseAuth.instance;
 
@@ -42,6 +42,10 @@ class _SignUpState extends State<SignUp> {
                     customSizedBox(),
                     emailTextField(),
                     customSizedBox(),
+                    fullNameTextField(),
+                    customSizedBox(),
+                    userNameTextField(),
+                    customSizedBox(),
                     passwordTextField(),
                     customSizedBox(),
                     signUpButton(),
@@ -50,7 +54,7 @@ class _SignUpState extends State<SignUp> {
                   ],
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -76,6 +80,36 @@ class _SignUpState extends State<SignUp> {
       },
       style: TextStyle(color: Colors.white),
       decoration: customInputDecoration("Email"),
+    );
+  }
+
+  TextFormField userNameTextField() {
+    return TextFormField(
+      validator: (value) {
+        if (value!.isEmpty) {
+          return "Bilgileri Eksiksiz Doldurunuz";
+        } else {}
+      },
+      onSaved: (value) {
+        userName = value!;
+      },
+      style: TextStyle(color: Colors.white),
+      decoration: customInputDecoration("Username"),
+    );
+  }
+
+  TextFormField fullNameTextField() {
+    return TextFormField(
+      validator: (value) {
+        if (value!.isEmpty) {
+          return "Bilgileri Eksiksiz Doldurunuz";
+        } else {}
+      },
+      onSaved: (value) {
+        fullName = value!;
+      },
+      style: TextStyle(color: Colors.white),
+      decoration: customInputDecoration("Full Name"),
     );
   }
 
