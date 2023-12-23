@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_ui/pages/home_page.dart';
 import 'package:flutter_ui/service/auth_service.dart';
 import 'package:flutter_ui/utils/customColors.dart';
 import 'package:flutter_ui/utils/customTextStyle.dart';
@@ -119,7 +120,7 @@ class _LoginPageState extends State<LoginPage> {
         onPressed: () {},
         child: customText(
           "Sifremi Unuttum",
-          CustomColors.textButtonColor,
+          CustomColors.pinkColor,
         ),
       ),
     );
@@ -147,15 +148,27 @@ class _LoginPageState extends State<LoginPage> {
   void signIn() async {
     if (formkey.currentState!.validate()) {
       formkey.currentState!.save();
-      try {
-        final userResult = await firebaseAuth.signInWithEmailAndPassword(
-            email: email, password: password);
-        Navigator.pushReplacementNamed(context, "/homePage");
-        print(userResult.user!.email);
-      } catch (e) {
-        print(e.toString());
+      final result = await authService.signIn(email, password);
+      if (result == "success") {
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => HomePage()),
+            (route) => false);
+      } else {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text("Hata"),
+                content: Text(result!),
+                actions: [
+                  TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text("Geri Don"))
+                ],
+              );
+            });
       }
-    } else {}
+    }
   }
 
   Center signUpButton() {
@@ -164,7 +177,7 @@ class _LoginPageState extends State<LoginPage> {
         onPressed: () => Navigator.pushNamed(context, "/signUp"),
         child: customText(
           "Hesap Olustur",
-          CustomColors.textButtonColor,
+          CustomColors.pinkColor,
         ),
       ),
     );

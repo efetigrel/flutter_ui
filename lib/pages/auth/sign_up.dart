@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_ui/pages/home_page.dart';
+import 'package:flutter_ui/service/auth_service.dart';
 import 'package:flutter_ui/utils/customColors.dart';
 import 'package:flutter_ui/utils/customTextStyle.dart';
 
@@ -11,9 +13,10 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-  late String email, password, fullName, userName;
+  late String email, fullname, username, password;
   final formkey = GlobalKey<FormState>();
   final firebaseAuth = FirebaseAuth.instance;
+  final authService = AuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +47,7 @@ class _SignUpState extends State<SignUp> {
                     customSizedBox(),
                     fullNameTextField(),
                     customSizedBox(),
-                    userNameTextField(),
+                    usernameTextField(),
                     customSizedBox(),
                     passwordTextField(),
                     customSizedBox(),
@@ -54,7 +57,7 @@ class _SignUpState extends State<SignUp> {
                   ],
                 ),
               ),
-            ),
+            )
           ],
         ),
       ),
@@ -83,21 +86,6 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-  TextFormField userNameTextField() {
-    return TextFormField(
-      validator: (value) {
-        if (value!.isEmpty) {
-          return "Bilgileri Eksiksiz Doldurunuz";
-        } else {}
-      },
-      onSaved: (value) {
-        userName = value!;
-      },
-      style: TextStyle(color: Colors.white),
-      decoration: customInputDecoration("Username"),
-    );
-  }
-
   TextFormField fullNameTextField() {
     return TextFormField(
       validator: (value) {
@@ -106,10 +94,25 @@ class _SignUpState extends State<SignUp> {
         } else {}
       },
       onSaved: (value) {
-        fullName = value!;
+        fullname = value!;
       },
       style: TextStyle(color: Colors.white),
-      decoration: customInputDecoration("Full Name"),
+      decoration: customInputDecoration("Ad Soyad"),
+    );
+  }
+
+  TextFormField usernameTextField() {
+    return TextFormField(
+      validator: (value) {
+        if (value!.isEmpty) {
+          return "Bilgileri Eksiksiz Doldurunuz";
+        } else {}
+      },
+      onSaved: (value) {
+        username = value!;
+      },
+      style: TextStyle(color: Colors.white),
+      decoration: customInputDecoration("Kullanici Adi"),
     );
   }
 
@@ -132,32 +135,23 @@ class _SignUpState extends State<SignUp> {
   Center signUpButton() {
     return Center(
       child: TextButton(
-        onPressed: signIn,
+        onPressed: signUp,
         child: customText(
           "Hesap Olustur",
-          CustomColors.textButtonColor,
+          CustomColors.pinkColor,
         ),
       ),
     );
   }
 
-  void signIn() async {
+  void signUp() async {
     if (formkey.currentState!.validate()) {
       formkey.currentState!.save();
-      try {
-        var userResult = await firebaseAuth.createUserWithEmailAndPassword(
-            email: email, password: password);
-        formkey.currentState!.reset();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-                "Kullanici basariliyla kaydedildi, giris sayfasina yonlendiriliyorsunuz"),
-          ),
-        );
-        Navigator.pushReplacementNamed(context, "/loginPage");
-      } catch (e) {
-        print(e.toString());
-      }
+      final result =
+          await authService.signUp(email, username, fullname, password);
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => HomePage()),
+          (route) => false);
     } else {}
   }
 
@@ -167,7 +161,7 @@ class _SignUpState extends State<SignUp> {
         onPressed: () => Navigator.pushNamed(context, "/loginPage"),
         child: customText(
           "Giris Sayfasina Geri Don",
-          CustomColors.textButtonColor,
+          CustomColors.pinkColor,
         ),
       ),
     );

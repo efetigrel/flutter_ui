@@ -1,9 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ui/pages/auth/login_page.dart';
 import 'package:flutter_ui/pages/auth/sign_up.dart';
 import 'package:flutter_ui/pages/home_page.dart';
+import 'package:flutter_ui/pages/tab_bar_contoller.dart';
 import 'package:flutter_ui/utils/customColors.dart';
 import 'firebase_options.dart';
 
@@ -18,7 +18,6 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -30,11 +29,9 @@ class MyApp extends StatelessWidget {
         "/homePage": (context) => HomePage()
       },
       theme: ThemeData(
-        scaffoldBackgroundColor: CustomColors.scaffoldBackgroundColor,
-      ),
-      home: Scaffold(
-        body: LoginPage(),
-      ),
+          scaffoldBackgroundColor: CustomColors.darkColor,
+          appBarTheme: AppBarTheme(color: CustomColors.pinkColor)),
+      home: LoginPage(),
     );
   }
 }
